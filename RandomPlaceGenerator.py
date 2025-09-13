@@ -19,15 +19,16 @@ suffixes = [
 ]
 
 def generate_fantasy_place():
-    """Toujours Préfixe + Middle+Suffix avec espace"""
+    """Gen order"""
     return f"{random.choice(prefixes)} {random.choice(middles)}{random.choice(suffixes)}"
 
 @app.get("/place")
 def get_place():
-    """Retourne un seul lieu"""
+    """Gen one name"""
     return {"place": generate_fantasy_place()}
 
 @app.get("/places/{n}")
 def get_places(n: int = 5):
-    """Retourne une liste de n lieux"""
+    """Return list of places"""
     return {"places": [generate_fantasy_place() for _ in range(n)]}
+
