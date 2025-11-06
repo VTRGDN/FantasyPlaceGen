@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 import random
 
-app = FastAPI(title="Fantasy Name and Item Generator")
+app = FastAPI(title="Fantasy Place and Pickaxe Generator")
 
-# Configuration du CORS
+# CORS
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -30,7 +30,10 @@ middles = [
 
 suffixes_places = [
     "shire", "hold", "lands", "mere", "gate", "loch", "field",
-    "watch", "hollow", "fall", "mount", "moor", "fort", "cliff"
+    "watch", "hollow", "fall", "mount", "moor", "fort", "cliff",
+    # Doublons pour augmenter le nombre de lieux
+    "vale", "spire", "grove", "peak", "ford", "mire", "keep",
+    "hollow", "loch", "mount", "moor", "cliff", "gate", "field"
 ]
 
 def generate_fantasy_place():
@@ -48,59 +51,85 @@ def get_places(n: int = 5):
 # GENERATEUR DE PIOCHES
 # ----------------------
 
+# Liste de 500 suffixes, du plus mauvais au légendaire
 suffixes_pickaxes = [
-    "en ruine", "très abîmée", "en mauvais état", "rafistolée", "tordue",  # 1-5
-    "douteuse", "usée", "fissurée", "branlante", "fragile",
-    "ridée", "délabrée", "bancale", "déséquilibrée", "instable",
-    "terne", "éraflée", "défaillante", "démotivée", "peu fiable",
-    # 21-40
-    "abîmée", "fatiguée", "usée par le temps", "mal ajustée", "peu solide",
-    "inconsistante", "sous-performante", "délaissée", "négligée", "déformée",
-    "terne", "approximative", "intacte mais ordinaire", "fonctionnelle", "acceptable",
-    "standard", "commune", "correcte", "simple", "utilitaire",
-    # 41-60
-    "ajustée", "robuste", "solide", "raffinée", "pratique",
-    "efficace", "stable", "soignée", "bien faite", "fiable",
-    "polie", "équilibrée", "de bonne facture", "convenable", "appréciée",
-    "fonctionnelle et robuste", "confortable", "bien entretenue", "renforcée", "exemplaire",
-    # 61-80
-    "précise", "aiguisée", "revêtue de cuivre", "affûtée",
-    "en acier poli", "soigneusement façonnée", "cohérente", "de bonne réputation", "presque parfaite", "sans défaut apparent",
-    "bien équilibrée", "finement travaillée", "en acier de qualité", "aux reflets métalliques", "à poignée solide",
-    "usinée à la perfection", "élégante", "en argent poli", "efficacement forgée", "respectée",
-    # 81-100
-    "magnifique", "d’atelier renommé", "hautement respectée", "fleurie de gravures simples", "ornée discrètement",
-    "à finesse maîtrisée", "trempée avec soin", "au tranchant net", "à longue durée", "hautement appréciée",
-    "en métal pur", "sobre mais efficace", "gravée de qualité", "à manche résistant", "racée",
-    # 101-120
-    "lustreuse", "soyeuse", "belle", "haute performance", "sans accrocs",
-    "spécialement conçue", "artisanale", "ciselée avec soin", "prestigieuse", "réputée",
-    "diamantée", "précieuse", "à pointe cristalline", "lumineuse", "à reflets multiples",
-    "d’artisan expert", "noble", "augmentée de runes", "résonnante", "intrinsèquement magique",
-    # 121-140
-    "aux inscriptions sacrées", "en acier trempé", "de maître forgeron", "bénie par un prêtre", "délicate mais solide",
-    "en or pur", "d’un savoir oublié", "trempée dans la lave", "à âme cristalline", "aux reflets bleutés",
-    "runique", "fabriquée avec soin ancestral", "à pointe incassable", "issue du savoir nain", "irréprochable",
-    # 141-160
-    "remarquable", "noble et fière", "auréolée de lumière", "augmentée d’un sceau sacré", "en acier céleste",
-    "enchantée", "aux gravures majestueuses", "d’esprit antique", "pure et noble", "digne d’un seigneur",
-    "en pierre de lune", "baignée dans la magie", "liée aux étoiles", "de toute beauté", "parfaite",
-    # 161-180
-    "transcendante", "glorieuse", "lumineuse", "aux énergies élémentaires", "céleste",
-    "baignée de lumière sacrée", "aux chants anciens", "sacralisée", "avec présence ancestrale", "révérée",
-    "forgée par les nains légendaires", "destinée à un roi", "héroïque", "à éclat éternel", "mythique",
-    # 181-200
-    "enchâssée de cristaux sacrés", "portée par les héros", "issue d’une prophétie", "au pouvoir sacré",
-    "de grande renommée", "aux échos mystiques", "inspirée par les dieux", "chérie par les anges",
-    "au tranchant astral", "issue des étoiles", "pure et éternelle", "dominatrice", "salutaire",
-    # 201-230
-    "aux pouvoirs divins", "trempée dans la lumière d’un dragon", "parfaite en tous points", "emblématique",
-    "ancêtre magique", "dotée d’un éclat sublime", "forgée par les mains divines", "trônant dans la gloire",
-    "issue du cœur d’un volcan sacré", "parfaite incarnation du savoir-faire",
-    "conçue pour les dieux", "d’une absolue clarté", "lumineuse et pure", "éternelle",
-    # 231-250
-    "sacrée", "emblème de puissance", "transcendante", "forgée par les dieux", "mythique",
-    "surnaturelle", "épique", "d’or étincelant", "ultime", "légendaire"
+    # 1-50 très mauvais
+    "en ruine", "bancale", "usée", "fragile", "délabrée", "tordue", "mal équilibrée",
+    "très abîmée", "rafistolée", "ébréchée", "abîmée", "fatiguée", "peu fiable",
+    "défaillante", "mal ajustée", "branlante", "terne", "éraflée", "déséquilibrée",
+    "déformée", "instable", "douteuse", "malchanceuse", "négligée", "cassée",
+    "sous-performante", "mal ficelée", "mal forgée", "fragilisée", "usée par le temps",
+    "bancale et usée", "faiblement forgée", "inconsistante", "mal entretenue", "délaissée",
+    "déglinguée", "défectueuse", "peu solide", "grumeleuse", "terne et usée",
+    "mal proportionnée", "mal finie", "légèrement tordue", "dégradée", "éclatée",
+    "terne et fragile", "mal façonnée", "d'une qualité douteuse", "prête à casser", "minable",
+    # 51-150 médiocre / ordinaire
+    "correcte", "standard", "commune", "simple", "fonctionnelle", "acceptable",
+    "robuste", "équilibrée", "stable", "pratique", "solide", "fiable",
+    "poli", "bien faite", "ajustée", "décent", "fonctionnelle et robuste", "confortable",
+    "bien entretenue", "renforcée", "exemplaire", "adéquate", "modeste", "utilitaire",
+    "basique", "courante", "ordinaire", "moyenne", "standardisée", "routine",
+    "banale", "satisfaisante", "raisonnable", "conventionnelle", "prête à l'usage",
+    "normale", "appréciable", "solide mais simple", "bonne facture", "fiabilité moyenne",
+    "acceptable mais ordinaire", "équilibrée et pratique", "raisonnablement solide", "stable et correcte",
+    "robuste mais simple", "en acier ordinaire", "polie mais simple", "fonctionnelle sans plus",
+    "sans éclat", "utile mais commune", "courante et robuste", "moyennement efficace", "stable et fiable",
+    "fiable mais banale", "bonne mais sans charme", "correcte et solide", "acceptable et pratique",
+    "digne d'un mineur", "standard mais fiable", "moyenne mais fonctionnelle", "commune mais solide",
+    "solide et moyenne", "prête pour le travail", "fonctionnelle mais ordinaire", "robuste mais banale",
+    "modeste mais fiable", "bonne mais simple", "solide mais peu impressionnante", "moyenne et équilibrée",
+    "pratique et commune", "utilitaire mais robuste", "banale mais fonctionnelle", "corrigée", "réparée",
+    "refaite à neuf", "fonctionnelle mais médiocre", "fiable mais ordinaire", "moyennement robuste",
+    "stable et pratique", "correcte pour le quotidien", "bonne mais sans éclat", "digne mais ordinaire",
+    "acceptable pour un mineur", "fonctionnelle mais sans magie", "robuste mais ordinaire", "fiable mais basique",
+    "standardisée et robuste", "utilitaire et efficace", "robuste mais sans charme", "fonctionnelle et moyenne",
+    "corrigée mais ordinaire", "prête à l'emploi", "fiable mais basique", "solide mais simple", "banale mais correcte",
+    "moyenne et utile", "commune mais robuste", "robuste et standard", "acceptable et stable", "correcte et pratique",
+    "solide mais ordinaire", "moyennement utile", "fonctionnelle mais banale", "fiable et moyenne", "prête pour le travail quotidien",
+    "stable mais ordinaire", "bonne mais modeste", "corrigée et fonctionnelle", "robuste mais basique", "standard et solide",
+    "modeste mais pratique", "fiable mais ordinaire", "acceptable et correcte", "banale mais stable", "moyennement robuste",
+    "solide mais ordinaire", "fonctionnelle et moyenne", "robuste mais commune", "fiable mais simple", "prête à l'usage",
+    # 151-300 bonne / rare
+    "raffinée", "efficace", "élégante", "fine", "soignée", "ajustée avec soin", "bien proportionnée",
+    "très robuste", "affûtée", "en acier poli", "bien équilibrée", "en métal de qualité", "respectée",
+    "ornée discrètement", "hautement appréciée", "poli et fonctionnel", "précise", "solide et fiable",
+    "hautement fonctionnelle", "robuste et fine", "élégante et pratique", "bien conçue", "finement travaillée",
+    "artisanale", "de bonne facture", "renforcée et stable", "bien forgée", "efficace et fiable",
+    "fiable et durable", "robuste et raffinée", "fonctionnelle et élégante", "hautement stable", "bien proportionnée",
+    "équilibrée et solide", "soignée et fine", "robuste et pratique", "efficacement forgée", "bien entretenue",
+    "stable et précise", "fiable et fonctionnelle", "élégante et solide", "soignée et robuste", "raffinée et fiable",
+    "robuste et efficace", "bien équilibrée et fiable", "précise et durable", "bien finie", "ajustée et solide",
+    "robuste et harmonieuse", "fonctionnelle et raffinée", "fiable et bien forgée", "élégante et stable",
+    "solide et bien proportionnée", "hautement fonctionnelle et fiable", "robuste et précise", "efficace et robuste",
+    "bien équilibrée et stable", "fiable et bien entretenue", "fonctionnelle et harmonieuse", "soignée et efficace",
+    "raffinée et durable", "robuste et bien finie", "élégante et fonctionnelle", "précise et stable", "solide et raffinée",
+    "hautement robuste", "fiable et bien proportionnée", "robuste et fonctionnelle", "précise et fiable", "bien équilibrée et durable",
+    "robuste et bien entretenue", "élégante et efficace", "solide et fonctionnelle", "raffinée et stable", "fiable et durable",
+    "bien forgée et équilibrée", "robuste et harmonieuse", "fonctionnelle et fiable", "soignée et stable", "précise et durable",
+    "élégante et robuste", "robuste et raffinée", "fiable et efficace", "bien proportionnée et solide", "fonctionnelle et harmonieuse",
+    "hautement robuste et fiable", "robuste et précise et fiable", "élégante et durable", "solide et raffinée", "fiable et bien équilibrée",
+    "robuste et stable et fonctionnelle", "bien finie et fiable", "précise et efficace", "robuste et fiable et solide", "hautement fonctionnelle et robuste",
+    # 301-400 très haute / épique
+    "enchâssée de gemmes", "runique", "enchanted", "forgée par les nains", "en acier trempé",
+    "baignée de magie", "aux gravures anciennes", "à pointe incassable", "mythique", "héroïque",
+    "destinée aux rois", "transcendante", "glorieuse", "lumineuse", "sacralisée",
+    "baignée de lumière", "aux chants anciens", "révérée", "forgée par des maîtres légendaires",
+    "digne d'un héros", "puissante", "ultime", "surnaturelle", "épique",
+    "de grande renommée", "majestueuse", "portée par les champions", "issue d'une prophétie", "emblématique",
+    "dominatrice", "pure et éternelle", "au tranchant astral", "dotée d'un éclat sublime", "forgée par les mains divines",
+    "trônant dans la gloire", "issue des étoiles", "parfaite en tous points", "aux pouvoirs divins", "trempée dans la lumière d'un dragon",
+    "inspirée par les dieux", "magnifique", "sacrée", "mythique et légendaire", "ultime et parfaite",
+    # 401-500 légendaire / divin
+    "légendaire", "ultime", "divine", "surnaturelle", "épique", "transcendante",
+    "forgée par les dieux", "mythique", "sacrée", "emblème de puissance", "ultime chef-d'œuvre",
+    "lumière éternelle", "d'or étincelant", "pour les rois", "destinée aux héros", "divinement forgée",
+    "à la gloire des ancêtres", "extraordinaire", "invincible", "suprême", "inégalée",
+    "légendaire et immortelle", "ultime puissance", "divine perfection", "mythique et sacrée", "épique et légendaire",
+    "transcendante et lumineuse", "forgée par la lumière des étoiles", "immortelle", "d’une rareté absolue",
+    "ultime création", "chef-d'œuvre des dieux", "invincible et sacrée", "légendaire et divine", "mythique et suprême",
+    "éternelle", "surnaturelle et immortelle", "ultime et parfaite", "divinement puissante", "légendaire et épique",
+    "mythique et transcendante", "ultime et lumineuse", "sacrée et immortelle", "divine et parfaite", "légendaire et mythique",
+    "chef-d'œuvre éternel", "forgée par les dieux suprêmes", "ultime et surnaturelle", "mythique et invincible", "légendaire absolue"
 ]
 
 @app.get("/pioche")
