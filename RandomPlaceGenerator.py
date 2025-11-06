@@ -1,7 +1,22 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import random
 
-app = FastAPI(title="Fantasy Place Generator")
+app = FastAPI(title="Fantasy Name and Item Generator")
+
+# Configuration du CORS
+origins = ["*"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ---------------------
+# GENERATEUR DE LIEUX
+# ---------------------
 
 prefixes = [
     "Elder", "Shadow", "Silver", "Iron", "Storm", "Moon", "Dragon",
@@ -13,43 +28,27 @@ middles = [
     "wood", "ford", "grove", "keep", "peak", "marsh", "reach", "hollow"
 ]
 
-suffixes = [
+suffixes_places = [
     "shire", "hold", "lands", "mere", "gate", "loch", "field",
     "watch", "hollow", "fall", "mount", "moor", "fort", "cliff"
 ]
 
 def generate_fantasy_place():
-    """Gen order"""
-    return f"{random.choice(prefixes)} {random.choice(middles)}{random.choice(suffixes)}"
+    return f"{random.choice(prefixes)} {random.choice(middles)}{random.choice(suffixes_places)}"
 
 @app.get("/place")
 def get_place():
-    """Gen one name"""
     return {"place": generate_fantasy_place()}
 
 @app.get("/places/{n}")
 def get_places(n: int = 5):
-    """Return list of places"""
     return {"places": [generate_fantasy_place() for _ in range(n)]}
 
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
-import random
+# ----------------------
+# GENERATEUR DE PIOCHES
+# ----------------------
 
-app = FastAPI()
-
-origins = ["*"]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Liste ordonnée des suffixes pour les pioches, du plus faible au plus fort
-suffixes = [
+suffixes_pickaxes = [
     "en ruine", "très abîmée", "en mauvais état", "rafistolée", "tordue",  # 1-5
     "douteuse", "usée", "fissurée", "branlante", "fragile",
     "ridée", "délabrée", "bancale", "déséquilibrée", "instable",
@@ -62,7 +61,7 @@ suffixes = [
     # 41-60
     "ajustée", "robuste", "solide", "raffinée", "pratique",
     "efficace", "stable", "soignée", "bien faite", "fiable",
-    "poli", "équilibrée", "de bonne facture", "convenable", "appréciée",
+    "polie", "équilibrée", "de bonne facture", "convenable", "appréciée",
     "fonctionnelle et robuste", "confortable", "bien entretenue", "renforcée", "exemplaire",
     # 61-80
     "précise", "aiguisée", "revêtue de cuivre", "affûtée",
@@ -106,6 +105,6 @@ suffixes = [
 
 @app.get("/pioche")
 async def generate_pickaxe():
-    quality_index = random.randint(1, len(suffixes))
-    suffix = suffixes[quality_index - 1]  # -1 car les indices Python commencent à 0
+    quality_index = random.randint(1, len(suffixes_pickaxes))
+    suffix = suffixes_pickaxes[quality_index - 1]
     return {"pioche": f"Pioche {suffix}", "qualite": quality_index}
