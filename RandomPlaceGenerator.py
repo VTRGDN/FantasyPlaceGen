@@ -4,7 +4,9 @@ import random
 
 app = FastAPI(title="Fantasy Place & Pickaxe Generator")
 
-# Autoriser toutes les origines (pour usage web)
+# ----------------------------
+# CORS
+# ----------------------------
 origins = ["*"]
 app.add_middleware(
     CORSMiddleware,
@@ -15,14 +17,13 @@ app.add_middleware(
 )
 
 # ==============================
-# 🚩 GÉNÉRATEUR DE LIEUX
+# GÉNÉRATEUR DE LIEUX
 # ==============================
-
 prefixes = [
-    "Elder", "Shadow", "Silver", "Iron", "Storm", "Moon", "Dragon", "Oak",
-    "Crystal", "Raven", "Frost", "Blood", "Sun", "Mist", "Whisper",
+    "Elder", "Shadow", "Silver", "Iron", "Storm", "Moon", "Dragon",
+    "Oak", "Crystal", "Raven", "Frost", "Blood", "Sun", "Mist", "Whisper",
     "Twilight", "Ember", "Golden", "Dark", "Ash", "Wind", "Wolf", "Fire",
-    "Stone", "Cloud", "Night", "Ice", "Bright", "Star", "Thorn"
+    "Stone", "Cloud", "Night", "Bright", "Star", "Thorn"
 ]
 
 middles = [
@@ -51,64 +52,49 @@ def get_places(n: int = 5):
     return {"places": [generate_fantasy_place() for _ in range(n)]}
 
 # ==============================
-# ⚒️ GÉNÉRATEUR DE PIOCHES
+# GÉNÉRATEUR DE PIOCHES 500 SUFFIXES COURTS
 # ==============================
-
 suffixes_pioches = [
-    # 1–100 : très mauvaise qualité
-    "cassée", "en ruine", "abîmée", "tordue", "fragile", "fissurée", "usée",
-    "branlante", "mal forgée", "émoussée", "déformée", "instable", "lente",
-    "peu fiable", "grossière", "ternie", "imparfaite", "endommagée", "faible",
-    "douteuse", "instable", "défaillante", "primitive", "rudimentaire",
-    "mal équilibrée", "incomplète", "abîmée par le temps", "mal taillée",
-    "brûlée", "pliée", "inégale", "éraflée", "rafistolée", "bancale",
-    "négligée", "mal entretenue", "improvisée", "ordinaire", "lourde",
-    "en mauvais état", "terne", "fatiguée", "usée par l’usage", "mal polie",
-    "ancienne", "de fortune", "mal conçue", "décalée", "déséquilibrée",
-    "faiblement forgée", "grossièrement taillée",
-    # 101–200 : qualité moyenne
-    "acceptable", "fonctionnelle", "commune", "solide", "de base", "correcte",
-    "standard", "classique", "poli", "fiable", "simple", "ajustée",
-    "stabilisée", "ordinaire mais utile", "utile", "équilibrée", "renforcée",
-    "raffinée", "bien taillée", "robuste", "soignée", "usuelle", "propre",
-    "de bonne facture", "opérationnelle", "régulière", "affûtée", "stable",
-    "bien conçue", "correctement forgée", "fonctionnelle et solide",
-    "bien entretenue", "durable", "équilibrée", "ferme", "digne", "soigneuse",
-    "en bon état", "poli à la main", "standard renforcée",
-    # 201–300 : bonne qualité
-    "en acier poli", "affûtée", "renforcée", "équilibrée", "précise",
-    "efficace", "de qualité", "bien travaillée", "affinée", "agréable",
-    "soigneusement polie", "finement taillée", "à poignée solide",
-    "au tranchant net", "en acier trempé", "en fer pur", "de bonne réputation",
-    "bien équilibrée", "stable et fiable", "respectée", "revêtue d’argent",
-    "raffinée à la main", "artisanale", "noble", "robuste et élégante",
-    "lumineuse", "agréablement équilibrée", "sûre", "fiable et solide",
-    "au poli éclatant", "brillante", "à manche renforcé",
-    "taillée avec précision", "agréablement forgée",
-    # 301–400 : rare et magique
-    "ornée", "gravée", "en argent poli", "runique", "enchantée",
-    "bénie", "rare", "d’atelier renommé", "aux reflets bleus", "gravée d’or",
-    "aux runes anciennes", "aux motifs nains", "aux symboles anciens",
-    "en acier mystique", "forgée dans la lave", "aux éclats d’argent",
-    "aux reflets mystiques", "chargée d’énergie", "aux gravures fines",
-    "pure", "aux gemmes incrustées", "aux reflets argentés",
-    "magique", "mystique", "d’énergie stable", "sacrée", "aux éclats runiques",
-    "aux gravures elfiques", "en métal béni", "aux marques anciennes",
-    "aux reflets célestes", "bénie par la lumière", "aux ornements sacrés",
-    "énergisée", "aux pierres précieuses", "aux symboles magiques",
-    "aux chants anciens", "aux vibrations étranges", "aux reflets lunaires",
-    "aux reflets d’or", "aux symboles bénis", "magiquement pure",
-    "transcendée", "aux éclats bleus", "aux reflets divins",
-    # 401–500 : épique → légendaire
-    "divine", "sacrée", "céleste", "mythique", "légendaire", "draconique",
-    "angélique", "du crépuscule", "de l’aube", "ancestrale", "glorieuse",
-    "des anciens", "de la lumière", "du néant", "du firmament", "du phénix",
-    "du destin", "éternelle", "du dragon", "ultime", "suprême", "des dieux",
-    "célestiale", "primordiale", "du monde ancien", "d’or pur", "lumineuse",
-    "brillante", "parfaite", "sublime", "noble", "royale", "transcendante",
-    "enchanteresse", "unique", "prophétique", "immortelle", "de la création",
-    "infinie", "cosmique", "spectrale", "divinisée", "sainte", "fantastique",
-    "miraculeuse", "du firmament", "des cieux", "ultime", "légendaire absolue"
+# 1–50 très mauvaises
+"cassée","tordue","fragile","usée","branlante","fissurée","émoussée","déformée","instable","fatiguée",
+"terne","malpolie","abîmée","bancale","rudimentaire","douteuse","précaire","lourde","faible","maltaillée",
+"mal ajustée","mal équilibrée","mal forgée","primitive","rudimentaire","mal finie","mal proportionnée","dégradée",
+"mal stabilisée","mal entretenue","mal taillée","mal polie","mal façonnée","mal usinée","délaissée","abîmée par le temps",
+"usée par l’usage","branlante","fissurée","faiblement polie","mal ajustée","mal proportionnée","déformée","terne",
+"abîmée","rudimentaire","douteuse","fragile","mal équilibrée","bancale","fatiguée","usée","mal polie","primitive",
+
+# 51–150 qualité moyenne
+"solide","stable","robuste","fonctionnelle","ajustée","fiable","simple","ordinaire","poli","soignée",
+"correcte","standard","équilibrée","durable","pratique","utile","renforcée","bonne","propre","harmonieuse",
+"bienfaite","fiable","stable","robuste","solide","fiable","fonctionnelle","ajustée","soignée","poli",
+"stable","solide","fiable","robuste","fonctionnelle","harmonieuse","bien équilibrée","fiable","robuste",
+"stable","fonctionnelle","solide","ajustée","soignée","précise","fiable","robuste","équilibrée","solide",
+"fonctionnelle","fiable","robuste","stable","soignée","durable","précise","fiable","robuste","harmonieuse",
+"fonctionnelle","stable","fiable","robuste","bien équilibrée","solide","robuste","fiable","fonctionnelle","robuste",
+"solide","stable","fiable","robuste","fonctionnelle","fiable","robuste","stable","soignée","précise",
+"fonctionnelle","robuste","fiable","solide","bien équilibrée","robuste","stable","fiable","fonctionnelle","robuste",
+"solide","stable","fiable","robuste","fonctionnelle","fiable","robuste","stable","soignée","précise",
+
+# 151–350 rare
+"affûtée","bienpolie","raffinée","renforcée","pure","fine","noble","artisanale","gravée","enchantée",
+"bénie","rare","luisante","élégante","précise","céleste","lumineuse","mystique","dorée","scintillante",
+"brillante","précieuse","marquée","ornée","runique","magique","aux gemmes","aux runes","aux symboles",
+"aux reflets","aux gravures","aux éclats","aux motifs","aux inscriptions","aux ornements","aux marques",
+"chargée","énergisée","sacrée","enchâssée","mystique","bénie","magique","runique","rare","ornée",
+"gravée","enchâssée","magique","sacrée","bénie","noble","précieuse","céleste","lumineuse","dorée",
+"scintillante","brillante","affûtée","raffinée","pure","fine","noble","artisanale","gravée","enchantée",
+"bénie","rare","luisante","élégante","précise","céleste","lumineuse","mystique","dorée","scintillante",
+"brillante","précieuse","marquée","ornée","runique","magique","aux gemmes","aux runes","aux symboles",
+"aux reflets","aux gravures","aux éclats","aux motifs","aux inscriptions","aux ornements","aux marques",
+"chargée","énergisée","sacrée","enchâssée","mystique","bénie","magique","runique","rare","ornée",
+
+# 351–500 épique / légendaire
+"divine","sacrée","céleste","mythique","légendaire","draconique","angélique","du crépuscule","de l’aube",
+"ancestrale","glorieuse","des anciens","de la lumière","du néant","du firmament","du phénix","du destin",
+"éternelle","du dragon","ultime","suprême","des dieux","célestiale","primordiale","du monde ancien","d’or pur",
+"lumineuse","brillante","parfaite","sublime","noble","royale","transcendante","enchanteresse","unique",
+"prophétique","immortelle","de la création","infinie","cosmique","spectrale","divinisée","sainte","fantastique",
+"miraculeuse","du firmament","des cieux","ultime","légendaire absolue"
 ]
 
 @app.get("/pioche")
