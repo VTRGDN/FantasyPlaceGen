@@ -17,7 +17,7 @@ app.add_middleware(
 )
 
 # -----------------------
-# Générateur de lieux (inchangé)
+# PLACES
 # -----------------------
 prefixes = [
     "Elder", "Shadow", "Silver", "Iron", "Storm", "Moon", "Dragon",
@@ -46,7 +46,7 @@ def get_places(n: int = 5):
     return {"places": [generate_fantasy_place() for _ in range(n)]}
 
 # -----------------------
-# Générateur de pioches avec 500 suffixes hiérarchisés
+# PICKAXES                                            
 # -----------------------
 suffixes_pioches = [
 "cassée","tordue","fragile","usée","émoussée","abîmée","fendue","déformée","branlante","terne",
@@ -75,3 +75,4 @@ async def generate_pickaxe():
     suffix = suffixes_pioches[suffix_index]
     qualite = suffix_index + 1
     return {"pioche": f"Pioche {suffix}", "qualite": qualite}
+
